@@ -79,10 +79,9 @@ public class CardTextController : MonoBehaviour
 
     private IEnumerator LoadImageFromUrl(string url)
     {
-        string proxyUrl = $"https://cors-anywhere.herokuapp.com/{url}";
-        Debug.Log($"Requesting image from: {proxyUrl}");
+        Debug.Log($"Requesting image from: {url}");
 
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(proxyUrl))
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
         {
             // Add the required headers
             uwr.SetRequestHeader("Origin", "http://localhost");
