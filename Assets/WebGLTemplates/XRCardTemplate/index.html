@@ -9,6 +9,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyBIuTnTru0iILMqOyKRzu2mZtIBnxEhdug",
+          authDomain: "fir-test-d319a.firebaseapp.com",
+          projectId: "fir-test-d319a",
+          storageBucket: "fir-test-d319a.firebasestorage.app",
+          messagingSenderId: "913686234554",
+          appId: "1:913686234554:android:0b20d5d7e441a710"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+    </script>
+
+
     <style>
         /* Override Bootstrap primary color to match navbar color */
         :root {
@@ -79,10 +96,18 @@
                             <option value="custom">Custom</option>
                         </select>
                     </div>
+
                     <div class="mb-3" id="customImageUrlInput" style="display: none;">
-                        <label for="customImageUrl" class="form-label">Custom Image URL</label>
-                        <input type="text" class="form-control" id="customImageUrl" placeholder="Enter image URL">
+                        <label style="display: none;" for="customImageUrl" class="form-label">URL</label>
+                        <input style="display: none;" type="text" class="form-control" id="customImageUrl" placeholder="Enter image URL">
+
+                        <label for="customImageFile" class="form-label">Image</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="file" class="form-control" id="customImageFile" accept="image/*" onchange="uploadImage()">
+                            <i id="loadingIcon" class="fas fa-spinner fa-spin" style="display: none; margin-left: 10px;"></i>
+                        </div>
                     </div>
+
                     <div class="mb-3">
                         <label for="cardTopInput" class="form-label">Top Text</label>
                         <input type="text" class="form-control" id="cardTopInput" placeholder="Enter top text">
@@ -140,6 +165,47 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
+        function uploadImage() {
+           const fileInput = document.getElementById('customImageFile');
+           const file = fileInput.files[0];
+           const generateCardButton = document.querySelector('.btn-primary');
+           const loadingIcon = document.getElementById('loadingIcon');
+           if (!file) {
+               alert('Please select an image file to upload.');
+               return;
+           }
+
+           generateCardButton.disabled = true; // Disable the button
+           loadingIcon.style.display = 'inline-block'; // Show loading icon
+
+           const storageRef = storage.ref('images/' + file.name);
+           const uploadTask = storageRef.put(file);
+
+           uploadTask.on('state_changed', 
+               (snapshot) => {
+                   // Observe state change events such as progress, pause, and resume
+                   const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                   console.log('Upload is ' + progress + '% done');
+               }, 
+               (error) => {
+                   // Handle unsuccessful uploads
+                   console.error('Upload failed:', error);
+                   alert('Failed to upload image.');
+                   generateCardButton.disabled = false; // Re-enable the button on failure
+                   loadingIcon.style.display = 'none'; // Hide loading icon
+               }, 
+               () => {
+                   // Handle successful uploads on complete
+                   uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                       console.log('File available at', downloadURL);
+                       document.getElementById('customImageUrl').value = downloadURL;
+                       generateCardButton.disabled = false; // Re-enable the button on success
+                       loadingIcon.style.display = 'none'; // Hide loading icon
+                   });
+               }
+           );
+        }
+
         function toggleCustomImageInput() {
             const cardImageInput = document.getElementById('cardImageInput');
             const customImageUrlInput = document.getElementById('customImageUrlInput');

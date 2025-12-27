@@ -24,7 +24,7 @@
     <div class="decorative-element"></div>
     <div class="decorative-element"></div>
 
-    <button id="viewCardButton" class="mt-4">View Card</button>
+    <button id="viewCardButton" class="mt-4" disabled>View Card</button>
 
     <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -110,6 +110,7 @@
         unityInstance = instance;
         loadingBar.style.display = "none";
         sendCardTextToUnity();
+        viewCardButton.disabled = false;
         if (fullscreenButton) {
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);

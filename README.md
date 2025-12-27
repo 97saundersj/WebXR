@@ -21,6 +21,28 @@ After customizing your AR greeting card, you can generate a shareable link. Clic
 - WebGL
 - HTML/CSS/JavaScript
 
+## Development
+
+### Running the Unity WebGL Build Locally
+
+To serve the Unity WebGL build locally without CORS issues:
+
+1. Navigate to your Unity build location:
+
+```powershell
+cd <your-unity-build-folder>
+```
+
+2. Run the http-server with CORS enabled:
+
+```powershell
+npx http-server -p 8000 --cors
+```
+
+3. Access at: `http://localhost:8000`
+
+**Note:** The `--cors` flag ensures proper CORS headers are sent, which is essential for Unity WebGL builds to work correctly when loaded from different origins.
+
 ## Features
 
 - Customizable landing page and greeting card themes
